@@ -13,7 +13,8 @@ export default {
       LAVA_ERROR_EXIST_EMAIL_DUPLICATE: '邮箱已被使用，请重新输入',
       LAVA_ERROR_EXIST_PHONE_DUPLICATE: '手机号已被使用，请重新输入',
       LAVA_ERROR_EXIST_USER_DUPLICATE: '用户名已存在，请重新输入',
-      LAVA_ERROR_LOGIN_CREDENTIAL_INVALID: '请输入正确的用户名，子用户名@主账号ID，手机号或密码',
+      // 注意 @ 是vue-i18n的特殊字符，需要改成{'@'}
+      LAVA_ERROR_LOGIN_CREDENTIAL_INVALID: `请输入正确的用户名，子用户名{'@'}主账号ID，手机号或密码`,
       LAVA_ERROR_LOGIN_FAIL_TIMES: {
         // 主账号
         master: '由于您密码输入错误次数过多，该账户已锁定暂时无法登录，您可以选择找回密码后在重新尝试',
