@@ -1,6 +1,6 @@
 {
   "name": "lava-fe-lib",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "ant-design-vue": "^1.7.8",
-    "axios": "^0.24.0",
-    "lava-fe-lib": "^1.0.0"
+    "axios": "^0.24.0"
   }
 }
