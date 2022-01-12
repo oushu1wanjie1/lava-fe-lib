@@ -1,42 +1,42 @@
 export default {
   // 系统错误
-  COMMON_ERROR_INTERNAL: 'common.error.internal',
+  'common.error.internal': 'COMMON_ERROR_INTERNAL',
   // 请求参数错误
-  COMMON_ERROR_REQUEST_UNMARSHAL: 'common.error.requestUnmarshal',
+  'common.error.requestUnmarshal': 'COMMON_ERROR_REQUEST_UNMARSHAL',
   // 记录不存在
-  LAVA_ERROR_NO_RECORDS: 'lava.error.no.records',
+  'lava.error.no.records': 'LAVA_ERROR_NO_RECORDS',
   // api秘钥 - 一个用户最多创建两个秘钥
-  LAVA_ERROR_SECRETKEY_TOOMANY: 'lava.error.secretKey.tooMany',
+  'lava.error.secretKey.tooMany': 'LAVA_ERROR_SECRETKEY_TOOMANY',
   // 用户名或密码错误
-  LAVA_ERROR_LOGIN_CREDENTIAL_INVALID: 'lava.error.login.credentialInvalid',
+  'lava.error.login.credentialInvalid': 'LAVA_ERROR_LOGIN_CREDENTIAL_INVALID',
   // 密码已过期，需要重置密码
-  LAVA_ERROR_LOGIN_PASSWORD_EXPIRED: 'lava.error.login.passwordExpired',
+  'lava.error.login.passwordExpired': 'LAVA_ERROR_LOGIN_PASSWORD_EXPIRED',
   // 密码错误次数过多
-  LAVA_ERROR_LOGIN_FAIL_TIMES: 'lava.error.login.failTimes',
+  'lava.error.login.failTimes': 'LAVA_ERROR_LOGIN_FAIL_TIMES',
   // 手机验证码错误
-  LAVA_ERROR_REGISTER_VERIFY_CODE: 'lava.error.register.verifyCode',
+  'lava.error.register.verifyCode': 'LAVA_ERROR_REGISTER_VERIFY_CODE',
   // 手机验证码过期
-  LAVA_ERROR_VERIFY_CODE_EXPIRED: 'lava.error.verifyCode.expired',
+  'lava.error.verifyCode.expired': 'LAVA_ERROR_VERIFY_CODE_EXPIRED',
   // 用户未激活
-  LAVA_ERROR_LOGIN_USER_INACTIVE: 'lava.error.login.userInactive',
+  'lava.error.login.userInactive': 'LAVA_ERROR_LOGIN_USER_INACTIVE',
   // 用户未审批通过
-  LAVA_ERROR_LOGIN_USER_NOT_APPROVED: 'lava.error.login.userNotApproved',
+  'lava.error.login.userNotApproved': 'LAVA_ERROR_LOGIN_USER_NOT_APPROVED',
   // 需要重置密码
-  LAVA_ERROR_LOGIN_PASSWORD_RESET: 'lava.error.login.passwordReset',
+  'lava.error.login.passwordReset': 'LAVA_ERROR_LOGIN_PASSWORD_RESET',
   // 审批中
-  LAVA_ERROR_LOGIN_NEED_APPROVE: 'lava.error.login.needApprove',
+  'lava.error.login.needApprove': 'LAVA_ERROR_LOGIN_NEED_APPROVE',
   // 新用户首次登录需要重置密码
-  LAVA_ERROR_LOGIN_NEW_USER: 'lava.error.login.newUser',
+  'lava.error.login.newUser': 'LAVA_ERROR_LOGIN_NEW_USER',
   // 用户名已存在
-  LAVA_ERROR_EXIST_USER_DUPLICATE: 'lava.error.exist.userDuplicate',
+  'lava.error.exist.userDuplicate': 'LAVA_ERROR_EXIST_USER_DUPLICATE',
   // 手机号已存在
-  LAVA_ERROR_EXIST_PHONE_DUPLICATE: 'lava.error.exist.phoneDuplicate',
+  'lava.error.exist.phoneDuplicate': 'LAVA_ERROR_EXIST_PHONE_DUPLICATE',
   // 密码格式错误
-  LAVA_ERROR_CHANGE_PASSWORD_PASSWORD_FORMAT: 'lava.error.changePassword.passwordFormat',
+  'lava.error.changePassword.passwordFormat': 'LAVA_ERROR_CHANGE_PASSWORD_PASSWORD_FORMAT',
   // 邮箱已存在
-  LAVA_ERROR_EXIST_EMAIL_DUPLICATE: 'lava.error.exist.emailDuplicate',
+  'lava.error.exist.emailDuplicate': 'LAVA_ERROR_EXIST_EMAIL_DUPLICATE',
   // 用户不存在
-  LAVA_ERROR_USER_NOT_FOUND: 'lava.error.user.notFound',
+  'lava.error.user.notFound': 'LAVA_ERROR_USER_NOT_FOUND',
   // 图片验证码不正确
-  LAVA_ERROR_VERIFY_CAPTCHA_CODE_INCORRECT: 'lava.error.verifyCaptcha.codeIncorrect',
+  'lava.error.verifyCaptcha.codeIncorrect': 'LAVA_ERROR_VERIFY_CAPTCHA_CODE_INCORRECT',
 }
