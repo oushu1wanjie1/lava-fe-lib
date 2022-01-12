@@ -13,7 +13,7 @@ export default {
       LAVA_ERROR_EXIST_EMAIL_DUPLICATE: '邮箱已被使用，请重新输入',
       LAVA_ERROR_EXIST_PHONE_DUPLICATE: '手机号已被使用，请重新输入',
       LAVA_ERROR_EXIST_USER_DUPLICATE: '用户名已存在，请重新输入',
-      LAVA_ERROR_LOGIN_CREDENTIAL_INVALID: '请输入正确的用户名,子用户名@主账号ID,手机号或密码',
+      LAVA_ERROR_LOGIN_CREDENTIAL_INVALID: '请输入正确的用户名，子用户名@主账号ID，手机号或密码',
       LAVA_ERROR_LOGIN_FAIL_TIMES: {
         // 主账号
         master: '由于您密码输入错误次数过多，该账户已锁定暂时无法登录，您可以选择找回密码后在重新尝试',
@@ -29,7 +29,7 @@ export default {
       LAVA_ERROR_NO_RECORDS: '记录不存在',
       LAVA_ERROR_REGISTER_VERIFY_CODE: '验证码错误，请检查后重新输入',
       LAVA_ERROR_SECRETKEY_TOOMANY: '一个用户最多创建两个秘钥',
-      LAVA_ERROR_USER_NOT_FOUND: '请输入正确的用户名,子用户名@主账号ID,手机号或密码',
+      LAVA_ERROR_USER_NOT_FOUND: '请输入正确的用户名，子用户名@主账号ID，手机号或密码',
       LAVA_ERROR_VERIFY_CAPTCHA_CODE_INCORRECT: '验证码错误，请检查后重新输入',
       LAVA_ERROR_VERIFY_CODE_EXPIRED: '验证码已过期，请重新获取后输入',
     }
