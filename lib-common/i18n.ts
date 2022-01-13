@@ -1,6 +1,5 @@
 // 使用BCP-47语言标识规范 https://juejin.cn/post/6844903863556767758
 // 常用地区见 https://www.techonthenet.com/js/language_tags.php
-import { useI18n } from 'vue-i18n'
 import { Response } from "./http";
 
 export const messages = {
@@ -38,7 +37,19 @@ export const messages = {
     }
   }
 }
-export const translateErrorMessage = (res: Response<any>, sub = '') => {
-  const { t } = useI18n()
-  return t(`errors['${res.meta.status_code || ''}']` + (sub ? `.${sub}` : ''))
+
+/**
+ * 基于response获取错误信息的辅助函数
+ * @param {(pattern: string) => string} t 当前i18n实例的translate函数
+ * @returns {(Response<any>, string) => string} 可以基于Response返回errormessage的函数
+ */
+export const translateErrorMessage = (t: (pattern: string) => string) => {
+  /**
+   * @param {Response<any>} res http请求response参数
+   * @param {string?} sub 可选，当该错误有多种可选message时，传入key使用对应的message，如master
+   * @returns {string} 返回message
+   */
+  return (res: Response<any>, sub = ''): string => {
+    return t(`errors['${res.meta.status_code || ''}']` + (sub ? `.${sub}` : ''))
+  }
 }
