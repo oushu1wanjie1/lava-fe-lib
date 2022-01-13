@@ -1,0 +1,182 @@
+{
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "plugin:vue/vue3-essential",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser"
+  },
+  "globals": {
+    "__webpack_public_path__": true
+  },
+  "rules": {
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "array-callback-return": "error",
+    "block-scoped-var": "error",
+    "class-methods-use-this": "error",
+    "consistent-return": "error",
+    "default-case": "error",
+    "dot-location": [
+      "error",
+      "property"
+    ],
+    "dot-notation": "error",
+    "no-eval": "error",
+    "no-global-assign": "error",
+    "eqeqeq": "error",
+    "no-lone-blocks": "error",
+    "no-loop-func": "error",
+    "no-multi-spaces": "error",
+    "no-new": "error",
+    "no-new-func": "error",
+    "no-new-wrappers": "error",
+    "no-param-reassign": "error",
+    "no-return-assign": "error",
+    "no-return-await": "error",
+    "no-script-url": "error",
+    "no-self-compare": "error",
+    "no-throw-literal": "error",
+    "no-unused-expressions": "error",
+    "no-void": "error",
+    "no-useless-return": "error",
+    "no-warning-comments": "warn",
+    "require-await": "error",
+    "no-shadow": "error",
+    "block-spacing": "error",
+    "brace-style": "error",
+    "comma-spacing": "error",
+    "comma-dangle": [
+      "error",
+      "only-multiline"
+    ],
+    "func-call-spacing": [
+      "error",
+      "never"
+    ],
+    "indent": [
+      "error",
+      2,
+      { "SwitchCase": 1 }
+    ],
+    "key-spacing": "error",
+    "keyword-spacing": "error",
+    "max-len": [
+      "warn",
+      {
+        "code": 150
+      }
+    ],
+    "no-trailing-spaces": "error",
+    "no-unneeded-ternary": "error",
+    "no-whitespace-before-property": "error",
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ],
+    "semi-spacing": "error",
+    "space-before-blocks": "error",
+    "space-before-function-paren": [
+      "error",
+      "never"
+    ],
+    "space-infix-ops": "error",
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "spaced-comment": [
+      "error",
+      "always"
+    ],
+    "arrow-spacing": "error",
+    "no-duplicate-imports": "error",
+    "no-useless-computed-key": "error",
+    "no-useless-rename": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-rest-params": "error",
+    "no-console": "warn",
+    "no-magic-numbers": [
+      "warn",
+      {
+        "ignore": [
+          0,
+          1,
+          -1
+        ],
+        "ignoreArrayIndexes": true,
+        "enforceConst": true,
+        "detectObjects": true
+      }
+    ],
+    "camelcase": [
+      "error",
+      {
+        "properties": "never",
+        "ignoreDestructuring": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/__tests__/*.{j,t}s?(x)",
+        "**/tests/unit/**/*.spec.{j,t}s?(x)"
+      ],
+      "env": {
+        "jest": true
+      }
+    },
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "rules": {
+        "camelcase": ["off"],
+        "no-shadow": ["off"],
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/camelcase": "off",
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "default",
+            "format": ["camelCase", "PascalCase", "UPPER_CASE"]
+          },
+          {
+            "selector": "default",
+            "modifiers": ["destructured"],
+            "format": ["camelCase", "PascalCase", "UPPER_CASE", "snake_case"]
+          },
+          {
+            "selector": "interface",
+            "format": [
+              "PascalCase",
+              "UPPER_CASE"
+            ],
+            "custom": {
+              "regex": "^I[A-Z]",
+              "match": false
+            }
+          },
+          {
+            "selector": "property",
+            "format": ["camelCase", "snake_case", "PascalCase"]
+          }
+        ]
+      }
+    }
+  ]
+}
