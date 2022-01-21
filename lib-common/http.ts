@@ -27,6 +27,11 @@ const axiosRequestConfig: AxiosRequestConfig = {
 const http: AxiosInstance = axios.create(axiosRequestConfig)
 
 http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
+  // @ts-ignore ['content-type']
+  const isjsonData = res.headers['content-type'].includes('application/json')
+  if (!isjsonData) {
+    return res
+  }
   if (!res.data.meta) {
     message.error('接口格式错误:没有meta')
     return Promise.reject(new Error('接口格式错误:没有meta'))
@@ -43,9 +48,14 @@ http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
     } else {
       sessionStorage.setItem('is401', '1')
       message.error(errObj.message)
-      setTimeout(() => {
-        useRouter().push('/login')
-      })
+      let interval = setInterval(() => {
+        const router = useRouter()
+        if (router) {
+          clearInterval(interval)
+          router.push('/login')
+        }
+      }, 250)
+
       return Promise.reject(err)
     }
   }
