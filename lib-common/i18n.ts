@@ -34,6 +34,7 @@ export const messages = {
       'lava.error.user.notFound': '请输入正确的用户名，子用户名@主账号ID，手机号或密码',
       'lava.error.verifyCaptcha.codeIncorrect': '验证码错误，请检查后重新输入',
       'lava.error.verifyCode.expired': '验证码已过期，请重新获取后输入',
+      'lava.error.db.canNotSetSchema': '当前 schema 已不存在，请检查后重新选择schema',
     }
   }
 }
