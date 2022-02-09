@@ -48,11 +48,12 @@ http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
     } else {
       sessionStorage.setItem('is401', '1')
       message.error(errObj.message)
-      let interval = setInterval(() => {
+      setTimeout(() => {
         const router = useRouter()
         if (router) {
-          clearInterval(interval)
           router.push('/login')
+        } else {
+          location.href = '/login'
         }
       }, 250)
 
