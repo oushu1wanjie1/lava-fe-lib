@@ -34,11 +34,27 @@ export const messages = {
       'lava.error.user.notFound': '请输入正确的用户名，子用户名@主账号ID，手机号或密码',
       'lava.error.verifyCaptcha.codeIncorrect': '验证码错误，请检查后重新输入',
       'lava.error.verifyCode.expired': '验证码已过期，请重新获取后输入',
-      'lava.error.db.canNotSetSchema': '当前 schema 已不存在，请检查后重新选择schema',
+      // 'lava.error.db.canNotSetSchema': '当前 schema 已不存在，请检查后重新选择schema',
+      'lava.error.worksheetHistoryNotExist': '很遗憾！您的执行历史已被删除，请刷新列表',
+      'lava.error.worksheetSqlNotExist': '很遗憾！您的版本历史已被删除，请稍后再试',
+      'lava.error.worksheetNotExist': '很遗憾！当前工作簿（工作簿名）已被删除。',
+      'lava.error.worksheetNameNotFormat': '请填写正确的50位字符以内不包涵<,>,/,|,*,,的名称',
+      'lava.error.worksheetNameAlreadyExist': '您填写的工作簿名已存在，请检查后重新填写',
+      'lava.error.worksheetFolderNotExist': '很遗憾！当前文件夹（文件夹名）已被删除。',
+      'lava.error.worksheetFolderNameNotFormat': '请填写正确的50位字符以内不包涵<,>,/,|,*,,的名称',
+      'lava.error.worksheetFolderNameAlreadyExist': '您填写的文件夹名已存在，请检查后重新填写',
+      'lava.error.loadTaskNotExist': '很遗憾！当前传输任务（传输任务名）已被删除。',
+      'lava.error.loadTaskNotInLoading': '很遗憾！传输任务取消失败。',
+      'lava.error.loadTaskNameAlreadyExist': '您填写的传输任务名已存在，请检查后重新填写',
+      'lava.error.db.canNotConnectToOushuDB': '很遗憾！连接OushuDB实例失败，请稍后刷新页面重试',
+      'lava.error.db.canNotFindPid': '很遗憾！获取SQL进程失败，请稍后刷新页面重试',
+      'lava.error.db.canNotSetResourceQueue': '很遗憾！配置命名空间失败，请稍后刷新页面重试',
+      'lava.error.db.canNotSetSchema': '很遗憾！配置命名空间失败，请稍后刷新页面重试',
+      'lava.error.cos.canNotGetTempCredential': '很遗憾！获取临时令牌失败，请稍后刷新页面重试',
+      'lava.error.cos.canNotCompressFiles': '很遗憾！获取压缩文件失败，请稍后刷新页面重试',
     }
   }
 }
-
 /**
  * 基于response获取错误信息的辅助函数
  * @param {(pattern: string) => string} t 当前i18n实例的translate函数
