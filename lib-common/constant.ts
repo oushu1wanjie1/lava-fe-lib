@@ -7,6 +7,8 @@ export const COLOR_ASSIST_GREEN_LIGHT = 'rgba(160, 215, 68, 0.3)'
 export const COLOR_ASSIST_PURPLE = 'rgba(163, 127, 255, 1)'
 export const COLOR_ASSIST_PURPLE_LIGHT = 'rgba(163, 127, 255, 0.3)'
 
+export const COLOR_TEXT_COMMENT = '#85888C'
+
 export const COLOR_SUCCESS = 'rgba(75, 202, 173, 1)'
 export const COLOR_SUCCESS_LIGHT = 'rgba(68, 215, 182, 0.3)'
 export const COLOR_DANGER = 'rgba(215, 68, 114, 1)'
