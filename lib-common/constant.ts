@@ -15,3 +15,5 @@ export const COLOR_DANGER = 'rgba(215, 68, 114, 1)'
 export const COLOR_DANGER_LIGHT = 'rgba(215, 68, 114, 0.3)'
 export const COLOR_WARN = 'rgba(215, 201, 68, 1)'
 export const COLOR_WARN_LIGHT = 'rgba(215, 201, 68, 0.3)'
+
+export const DEFAULT_PAGE_SIZE = 20
