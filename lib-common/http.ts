@@ -1,7 +1,6 @@
-import { useRouter } from "vue-router";
+import { useRouter } from 'vue-router'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import message from 'ant-design-vue/lib/message'
-import 'ant-design-vue/lib/message/style/css'
+import { message } from 'ant-design-vue'
 
 
 // const TIMEOUT = 10000
