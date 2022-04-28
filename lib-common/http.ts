@@ -1,6 +1,7 @@
 import { useRouter } from 'vue-router'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { message } from 'ant-design-vue'
+import qs from 'qs'
 
 
 // const TIMEOUT = 10000
@@ -21,6 +22,11 @@ export interface Response<T> {
 const axiosRequestConfig: AxiosRequestConfig = {
   baseURL: '/api',
   // timeout: TIMEOUT,
+  paramsSerializer: params => {
+    return qs.stringify(params, {
+      indices: false,
+    })
+  }
 }
 
 const http: AxiosInstance = axios.create(axiosRequestConfig)
