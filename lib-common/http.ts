@@ -64,7 +64,7 @@ http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
 
       return Promise.reject(err)
     }
-  } else if (/^(4|5)[0-9]{2}/.test(errObj.status)) {
+  } else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
     message.error(errObj.message)
   }
 
