@@ -1,6 +1,6 @@
 import { useRouter } from 'vue-router'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue-3'
 import qs from 'qs'
 
 
