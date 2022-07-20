@@ -1,7 +1,10 @@
 import { useRouter } from 'vue-router'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+// @ts-ignore
 import { message } from 'ant-design-vue-3'
 import qs from 'qs'
+// @ts-ignore
+import debounce from 'lodash.debounce'
 
 
 // const TIMEOUT = 10000
@@ -28,6 +31,8 @@ const axiosRequestConfig: AxiosRequestConfig = {
     })
   }
 }
+
+const show403Message = debounce(() => { message.error('系统错误：没有权限') }, 2000, { leading: true, trailing: false })
 
 const http: AxiosInstance = axios.create(axiosRequestConfig)
 
@@ -65,14 +70,8 @@ http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
       return Promise.reject(err)
     }
   } else if (errObj.status === 403) {
-    if (sessionStorage.getItem('is403') === '1') {
-      return err
-    } else {
-      sessionStorage.setItem('is403', '1')
-      message.error('系统错误：没有权限')
-      return Promise.reject(err)
-    }
-  }else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
+    show403Message()
+  } else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
     message.error(errObj.message)
   }
 

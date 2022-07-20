@@ -1,6 +1,6 @@
 {
   "name": "lava-fe-lib",
-  "version": "1.0.27",
+  "version": "1.0.32",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,11 +11,13 @@
   "dependencies": {
     "ant-design-vue": "^2.2.8",
     "axios": "^0.24.0",
+    "lodash.debounce": "^4.0.8",
     "qs": "^6.10.3",
     "vue-i18n": "^9.2.0-beta.37",
     "vue-router": "^4.0.10"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.7",
     "@types/qs": "^6.9.7",
     "typescript": "^4.5.4"
   }
