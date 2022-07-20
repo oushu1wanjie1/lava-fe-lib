@@ -52,7 +52,7 @@ http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
       return err
     } else {
       sessionStorage.setItem('is401', '1')
-      message.error(errObj.message)
+      message.error('登录状态已过期，请重新登录')
       setTimeout(() => {
         const router = useRouter()
         if (router) {
@@ -64,7 +64,15 @@ http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
 
       return Promise.reject(err)
     }
-  } else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
+  } else if (errObj.status === 403) {
+    if (sessionStorage.getItem('is403') === '1') {
+      return err
+    } else {
+      sessionStorage.setItem('is403', '1')
+      message.error('系统错误：没有权限')
+      return Promise.reject(err)
+    }
+  }else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
     message.error(errObj.message)
   }
 
