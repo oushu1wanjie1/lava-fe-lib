@@ -57,6 +57,8 @@ http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
       return err
     } else {
       sessionStorage.setItem('is401', '1')
+      console.log('[lava-fe-lib]因接口40111而返回login', location.href.replace(location.origin, ''))
+      sessionStorage.setItem('LAST_VISITED_PAGE', location.href.replace(location.origin, ''))
       message.error('登录状态已过期，请重新登录')
       setTimeout(() => {
         const router = useRouter()
