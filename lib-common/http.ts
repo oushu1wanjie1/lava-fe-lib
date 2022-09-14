@@ -5,6 +5,7 @@ import { message } from 'ant-design-vue-3'
 import qs from 'qs'
 // @ts-ignore
 import debounce from 'lodash.debounce'
+import { messages } from './i18n'
 
 
 // const TIMEOUT = 10000
@@ -22,62 +23,80 @@ export interface Response<T> {
   data: T;
 }
 
-const axiosRequestConfig: AxiosRequestConfig = {
-  baseURL: '/api',
-  // timeout: TIMEOUT,
-  paramsSerializer: params => {
-    return qs.stringify(params, {
-      indices: false,
-    })
+export class CustomHttpOptions {
+  // 不在页面上显示Meta
+  doNotShowMetaErrorMessage = false
+  constructor() {
+    // --
   }
 }
 
-const show403Message = debounce(() => { message.error('系统错误：没有权限') }, 2000, { leading: true, trailing: false })
-
-const http: AxiosInstance = axios.create(axiosRequestConfig)
-
-http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
-  // @ts-ignore ['content-type']
-  const isjsonData = res.headers['content-type'].includes('application/json')
-  if (!isjsonData) {
-    return res
-  }
-  if (!res.data.meta) {
-    message.error('接口格式错误:没有meta')
-    return Promise.reject(new Error('接口格式错误:没有meta'))
-  }
-  return {
-    ...(res.data || {}),
-    meta: res.data.meta || {},
-  }
-}, (err) => {
-  const errObj: any = JSON.parse(JSON.stringify(err))
-  if (errObj.status === 401) {
-    if (sessionStorage.getItem('is401') === '1') {
-      return err
-    } else {
-      sessionStorage.setItem('is401', '1')
-      console.log('[lava-fe-lib]因接口40111而返回login', location.href.replace(location.origin, ''))
-      sessionStorage.setItem('LAST_VISITED_PAGE', location.href.replace(location.origin, ''))
-      message.error('登录状态已过期，请重新登录')
-      setTimeout(() => {
-        const router = useRouter()
-        if (router) {
-          router.push('/login')
-        } else {
-          location.href = '/login'
-        }
-      }, 250)
-
-      return Promise.reject(err)
+export const customHttp = (options = new CustomHttpOptions() ) => {
+  const axiosRequestConfig: AxiosRequestConfig = {
+    baseURL: '/api',
+    // timeout: TIMEOUT,
+    paramsSerializer: params => {
+      return qs.stringify(params, {
+        indices: false,
+      })
     }
-  } else if (errObj.status === 403) {
-    show403Message()
-  } else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
-    message.error(errObj.message)
   }
 
-  return Promise.reject(err)
-})
+  const show403Message = debounce(() => {
+    message.error('系统错误：没有权限')
+  }, 2000, { leading: true, trailing: false })
 
-export default http
+  const http: AxiosInstance = axios.create(axiosRequestConfig)
+
+  http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
+    // @ts-ignore ['content-type']
+    const isjsonData = res.headers['content-type'].includes('application/json')
+    if (!isjsonData) {
+      return res
+    }
+    if (!res.data.meta) {
+      message.error('接口格式错误:没有meta')
+      return Promise.reject(new Error('接口格式错误:没有meta'))
+    }
+    // 统一处理meta报错信息
+    if (!res.data.meta.success && !options.doNotShowMetaErrorMessage) {
+      // @ts-ignore 有毛病这个ts，key不存在就返回undefined不就完了，又不会报错。。
+      message.error(messages['zh-CN'].errors[res.data.meta.status_code] || `错误:${res.data.meta.status_code}`)
+    }
+    return {
+      ...(res.data || {}),
+      meta: res.data.meta || {},
+    }
+  }, (err) => {
+    const errObj: any = JSON.parse(JSON.stringify(err))
+    if (errObj.status === 401) {
+      if (sessionStorage.getItem('is401') === '1') {
+        return err
+      } else {
+        sessionStorage.setItem('is401', '1')
+        console.log('[lava-fe-lib]因接口40111而返回login', location.href.replace(location.origin, ''))
+        sessionStorage.setItem('LAST_VISITED_PAGE', location.href.replace(location.origin, ''))
+        message.error('登录状态已过期，请重新登录')
+        setTimeout(() => {
+          const router = useRouter()
+          if (router) {
+            router.push('/login')
+          } else {
+            location.href = '/login'
+          }
+        }, 250)
+
+        return Promise.reject(err)
+      }
+    } else if (errObj.status === 403) {
+      show403Message()
+    } else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
+      message.error(errObj.message)
+    }
+
+    return Promise.reject(err)
+  })
+  return http
+}
+
+export default customHttp()

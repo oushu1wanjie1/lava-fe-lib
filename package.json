@@ -1,6 +1,6 @@
 {
   "name": "lava-fe-lib",
-  "version": "1.0.33",
+  "version": "1.0.36",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
     "ant-design-vue": "^2.2.8",
     "axios": "^0.24.0",
     "lodash.debounce": "^4.0.8",
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.7",
     "@types/qs": "^6.9.7",
+    "eslint": "^8.23.1",
     "typescript": "^4.5.4"
   }
 }
