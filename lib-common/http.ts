@@ -26,12 +26,25 @@ export interface Response<T> {
 export class CustomHttpOptions {
   // 不在页面上显示Meta
   doNotShowMetaErrorMessage = false
+  // 发送时取消上一个请求
+  cancelLastRequest = false
   constructor() {
     // --
   }
 }
 
+const show403Message = debounce(() => {
+  message.error('系统错误：没有权限')
+}, 2000, { leading: true, trailing: false })
+
+const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string) => debounce(() => {
+  // @ts-ignore 有毛病这个ts，key不存在就返回undefined不就完了，又不会报错。。
+  message.error(messages['zh-CN'].errors[statusCode])
+}, 2000, { leading: true, trailing: false })
+
 export const customHttp = (options = new CustomHttpOptions() ) => {
+  const abortController = options.cancelLastRequest ? new AbortController() : undefined
+  const showMetaErrorMessageDebounceFunctionList: Record<string, () => any> = {}
   const axiosRequestConfig: AxiosRequestConfig = {
     baseURL: '/api',
     // timeout: TIMEOUT,
@@ -42,11 +55,15 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     }
   }
 
-  const show403Message = debounce(() => {
-    message.error('系统错误：没有权限')
-  }, 2000, { leading: true, trailing: false })
+  if (abortController) axiosRequestConfig.signal = abortController.signal
 
   const http: AxiosInstance = axios.create(axiosRequestConfig)
+
+  // 如果有cancelLastRequest，则触发上一个请求的cancel
+  http.interceptors.request.use((config) => {
+    if (abortController) abortController.abort()
+    return config
+  })
 
   http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
     // @ts-ignore ['content-type']
@@ -60,8 +77,9 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     }
     // 统一处理meta报错信息
     if (!res.data.meta.success && !options.doNotShowMetaErrorMessage) {
-      // @ts-ignore 有毛病这个ts，key不存在就返回undefined不就完了，又不会报错。。
-      message.error(messages['zh-CN'].errors[res.data.meta.status_code] || `错误:${res.data.meta.status_code}`)
+      if (!showMetaErrorMessageDebounceFunctionList[res.data.meta.status_code]) {
+        showMetaErrorMessageDebounceFunctionList[res.data.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(res.data.meta.status_code)
+      } showMetaErrorMessageDebounceFunctionList[res.data.meta.status_code]()
     }
     return {
       ...(res.data || {}),
@@ -96,6 +114,7 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
 
     return Promise.reject(err)
   })
+
   return http
 }
 
