@@ -244,7 +244,8 @@ export const messages = {
       'lava.error.updateDBBlackAndWhiteListIsWrong': '更新访问配置错误',
       'lava.error.updateDBBlackAndWhiteListFailed': '更新访问配置失败',
       'lava.error.db.canNotDropWhenIsBeingAccessed': '很遗憾！不能在有人访问时进行删除，请稍后刷新页面重试',
-      'lava.error.db.canNotGetSessionId': '很遗憾！获取SessionId失败，请稍后刷新页面重试'
+      'lava.error.db.canNotGetSessionId': '很遗憾！获取SessionId失败，请稍后刷新页面重试',
+      'lava.error.createHDFSFolderError': '创建HDFS目录失败'
     }
   }
 }

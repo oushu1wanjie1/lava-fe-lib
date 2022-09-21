@@ -39,7 +39,7 @@ const show403Message = debounce(() => {
 
 const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string) => debounce(() => {
   // @ts-ignore 有毛病这个ts，key不存在就返回undefined不就完了，又不会报错。。
-  message.error(messages['zh-CN'].errors[statusCode])
+  message.error(messages['zh-CN'].errors[statusCode] || statusCode)
 }, 2000, { leading: true, trailing: false })
 
 export const customHttp = (options = new CustomHttpOptions() ) => {
