@@ -18,10 +18,21 @@ export interface Meta {
   params: any;
 }
 
+// 老旧服务的 response，适用于wasp flow
+export interface OldResponse<T> {
+  code: number,
+  message: string,
+  data: T
+}
+
+// 默认的response
 export interface Response<T> {
   meta: Meta;
   data: T;
 }
+
+// 复合旧版和现行的response，只用于该文件中，用于初始化
+type MixResponse<T> = Partial<OldResponse<T> & Response<T>>
 
 export class CustomHttpOptions {
   // 不在页面上显示Meta
@@ -65,26 +76,38 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     return config
   })
 
-  http.interceptors.response.use((res: AxiosResponse<Response<any>>) => {
+  http.interceptors.response.use((res: AxiosResponse<MixResponse<any>>) => {
     // @ts-ignore ['content-type']
     const isjsonData = res.headers['content-type'].includes('application/json')
     if (!isjsonData) {
       return res
     }
-    if (!res.data.meta) {
+    let modifyRes: Response<any> = { meta: { success: true, message: '', status_code: '', params: '' }, data: undefined }
+    // 将旧版的Response处理成现行版本，映射见下面逻辑
+    if (res.data.code !== undefined && res.data.meta === undefined) {
+      // 该情况下为OldResponse
+      modifyRes.meta = {
+        success: res.data.code === 0,
+        status_code: String(res.data.code),
+        message: res.data.message || '',
+        params: ''
+      }
+      modifyRes.data = res.data.data
+    } else if (res.data.meta !== undefined) {
+      // 该情况下为现行的Response
+      modifyRes = res.data as Response<any>
+    } else {
+      // 如果没有meta且没有code，则认为接口格式错误
       message.error('接口格式错误:没有meta')
       return Promise.reject(new Error('接口格式错误:没有meta'))
     }
     // 统一处理meta报错信息
-    if (!res.data.meta.success && !options.doNotShowMetaErrorMessage) {
-      if (!showMetaErrorMessageDebounceFunctionList[res.data.meta.status_code]) {
-        showMetaErrorMessageDebounceFunctionList[res.data.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(res.data.meta.status_code)
-      } showMetaErrorMessageDebounceFunctionList[res.data.meta.status_code]()
+    if (!modifyRes.meta.success && !options.doNotShowMetaErrorMessage) {
+      if (!showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]) {
+        showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(modifyRes.meta.status_code)
+      } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]()
     }
-    return {
-      ...(res.data || {}),
-      meta: res.data.meta || {},
-    }
+    return modifyRes
   }, (err) => {
     const errObj: any = JSON.parse(JSON.stringify(err))
     if (errObj.status === 401) {
