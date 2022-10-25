@@ -104,7 +104,9 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     // 统一处理meta报错信息
     if (!modifyRes.meta.success && !options.doNotShowMetaErrorMessage) {
       if (!showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]) {
-        showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(modifyRes.meta.status_code)
+        showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(
+          modifyRes.meta.status_code || modifyRes.meta.message
+        )
       } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]()
     }
     return modifyRes
