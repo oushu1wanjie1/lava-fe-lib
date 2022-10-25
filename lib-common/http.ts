@@ -107,7 +107,7 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
         showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code || modifyRes.meta.message] = showMetaErrorMessageDebounceFunctionFactory(
           modifyRes.meta.status_code || modifyRes.meta.message
         )
-      } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]()
+      } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code || modifyRes.meta.message]()
     }
     return modifyRes
   }, (err) => {
