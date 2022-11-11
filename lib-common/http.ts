@@ -1,4 +1,5 @@
 import { useRouter } from 'vue-router'
+// @ts-ignore
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 // @ts-ignore
 import { message } from 'ant-design-vue-3'
@@ -48,9 +49,9 @@ const show403Message = debounce(() => {
   message.error('系统错误：没有权限')
 }, 2000, { leading: true, trailing: false })
 
-const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string) => debounce(() => {
+const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string, legacyMsg?: string) => debounce(() => {
   // @ts-ignore 有毛病这个ts，key不存在就返回undefined不就完了，又不会报错。。
-  message.error(messages['zh-CN'].errors[statusCode] || statusCode)
+  message.error(messages['zh-CN'].errors[statusCode] || legacyMsg || statusCode)
 }, 2000, { leading: true, trailing: false })
 
 export const customHttp = (options = new CustomHttpOptions() ) => {
@@ -59,7 +60,7 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
   const axiosRequestConfig: AxiosRequestConfig = {
     baseURL: '/api',
     // timeout: TIMEOUT,
-    paramsSerializer: params => {
+    paramsSerializer: (params: any) => {
       return qs.stringify(params, {
         indices: false,
       })
@@ -71,7 +72,7 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
   const http: AxiosInstance = axios.create(axiosRequestConfig)
 
   // 如果有cancelLastRequest，则触发上一个请求的cancel
-  http.interceptors.request.use((config) => {
+  http.interceptors.request.use((config: any) => {
     if (abortController) abortController.abort()
     return config
   })
@@ -88,7 +89,8 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
       // 该情况下为OldResponse
       modifyRes.meta = {
         success: res.data.code === 0,
-        status_code: String(res.data.code),
+        // 当code是空字符串或者undefined的时候，尝试用message代替(有些旧版请求没有code，用message当做code)
+        status_code: String((res.data.code === undefined || res.data.code === '') ? res.data.message : res.data.code),
         message: res.data.message || '',
         params: ''
       }
@@ -104,13 +106,14 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     // 统一处理meta报错信息
     if (!modifyRes.meta.success && !options.doNotShowMetaErrorMessage) {
       if (!showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]) {
-        showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code || modifyRes.meta.message] = showMetaErrorMessageDebounceFunctionFactory(
-          modifyRes.meta.status_code || modifyRes.meta.message
+        showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(
+          modifyRes.meta.status_code,
+          modifyRes.meta.message
         )
-      } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code || modifyRes.meta.message]()
+      } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]()
     }
     return modifyRes
-  }, (err) => {
+  }, (err: any) => {
     const errObj: any = JSON.parse(JSON.stringify(err))
     if (errObj.status === 401) {
       if (sessionStorage.getItem('is401') === '1') {
