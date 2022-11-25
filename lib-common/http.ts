@@ -8,10 +8,9 @@ import qs from 'qs'
 import debounce from 'lodash.debounce'
 import { messages } from './i18n'
 
-
-// const TIMEOUT = 10000
 export const SUCCESS_STATUS_CODE = 200
 
+// Meta信息
 export interface Meta {
   success: boolean;
   message: string;
@@ -21,7 +20,7 @@ export interface Meta {
 
 // 老旧服务的 response，适用于wasp flow
 export interface OldResponse<T> {
-  code: number,
+  code: string | number,
   message: string,
   data: T
 }
@@ -35,6 +34,7 @@ export interface Response<T> {
 // 复合旧版和现行的response，只用于该文件中，用于初始化
 type MixResponse<T> = Partial<OldResponse<T> & Response<T>>
 
+// Http请求自定义配置，使用该类可以新建自定义的http实例
 export class CustomHttpOptions {
   // 不在页面上显示Meta
   doNotShowMetaErrorMessage = false
@@ -45,28 +45,34 @@ export class CustomHttpOptions {
   }
 }
 
+// 403（没有权限）消息的显示
 const show403Message = debounce(() => {
   message.error('系统错误：没有权限')
 }, 2000, { leading: true, trailing: false })
 
+// 后台返回错误的默认反馈（显示message）
 const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string, legacyMsg?: string) => debounce(() => {
   // @ts-ignore 有毛病这个ts，key不存在就返回undefined不就完了，又不会报错。。
   message.error(messages['zh-CN'].errors[statusCode] || legacyMsg || statusCode)
 }, 2000, { leading: true, trailing: false })
 
+// http main
 export const customHttp = (options = new CustomHttpOptions() ) => {
+  // 取消本次请求的功能，在选项cancelLastRequest为true时启用
   const abortController = options.cancelLastRequest ? new AbortController() : undefined
+  // 提示后台返回报错的debounce函数列表，保证连续2秒内报同一个错误只显示一条
   const showMetaErrorMessageDebounceFunctionList: Record<string, () => any> = {}
+  // 请求配置
   const axiosRequestConfig: AxiosRequestConfig = {
+    // 所有请求添加/api前缀
     baseURL: '/api',
-    // timeout: TIMEOUT,
+    // 对get请求进行querystring处理
     paramsSerializer: (params: any) => {
       return qs.stringify(params, {
         indices: false,
       })
     }
   }
-
   if (abortController) axiosRequestConfig.signal = abortController.signal
 
   const http: AxiosInstance = axios.create(axiosRequestConfig)
@@ -74,6 +80,14 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
   // 如果有cancelLastRequest，则触发上一个请求的cancel
   http.interceptors.request.use((config: any) => {
     if (abortController) abortController.abort()
+    // 添加后端审计用header
+    config.headers = {
+      ...config.headers,
+      // 请求的菜单id
+      menuId: sessionStorage.getItem('requestHeaderMenuId') || '',
+      // 请求的菜单名称
+      menuName: sessionStorage.getItem('requestHeaderMenuName') || ''
+    }
     return config
   })
 
