@@ -37,11 +37,15 @@ type MixResponse<T> = Partial<OldResponse<T> & Response<T>>
 // Http请求自定义配置，使用该类可以新建自定义的http实例
 export class CustomHttpOptions {
   // 不在页面上显示Meta
-  doNotShowMetaErrorMessage = false
+  doNotShowMetaErrorMessage: boolean
+  // 全局捕捉异常 message error 时不使用 debounce
+  doNotShowMetaErrorMessageWithDebounce: boolean
   // 发送时取消上一个请求
-  cancelLastRequest = false
-  constructor() {
-    // --
+  cancelLastRequest: boolean
+  constructor(doNotShowMetaErrorMessage = false, doNotShowMetaErrorMessageWithDebounce = false, cancelLastRequest = false) {
+    this.doNotShowMetaErrorMessage = doNotShowMetaErrorMessage
+    this.doNotShowMetaErrorMessageWithDebounce = doNotShowMetaErrorMessageWithDebounce
+    this.cancelLastRequest = cancelLastRequest
   }
 }
 
@@ -119,12 +123,17 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     }
     // 统一处理meta报错信息
     if (!modifyRes.meta.success && !options.doNotShowMetaErrorMessage) {
-      if (!showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]) {
-        showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(
-          modifyRes.meta.status_code,
-          modifyRes.meta.message
-        )
-      } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]()
+      if (options.doNotShowMetaErrorMessageWithDebounce) {
+        // @ts-ignore
+        message.error(messages['zh-CN'].errors[modifyRes.meta.status_code] || modifyRes.meta.message || modifyRes.meta.status_code)
+      } else {
+        if (!showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]) {
+          showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(
+            modifyRes.meta.status_code,
+            modifyRes.meta.message
+          )
+        } showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]()
+      }
     }
     return modifyRes
   }, (err: any) => {
