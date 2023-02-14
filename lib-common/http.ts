@@ -63,7 +63,7 @@ const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string, legacyM
 // http main
 export const customHttp = (options = new CustomHttpOptions() ) => {
   // 取消本次请求的功能，在选项cancelLastRequest为true时启用
-  const abortController = options.cancelLastRequest ? new AbortController() : undefined
+  let abortController: AbortController | undefined = undefined
   // 提示后台返回报错的debounce函数列表，保证连续2秒内报同一个错误只显示一条
   const showMetaErrorMessageDebounceFunctionList: Record<string, () => any> = {}
   // 请求配置
@@ -77,13 +77,16 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
       })
     }
   }
-  if (abortController) axiosRequestConfig.signal = abortController.signal
 
   const http: AxiosInstance = axios.create(axiosRequestConfig)
 
   // 如果有cancelLastRequest，则触发上一个请求的cancel
   http.interceptors.request.use((config: any) => {
-    if (abortController) abortController.abort()
+    if (options.cancelLastRequest) {
+      if (abortController) abortController.abort()
+      abortController = new AbortController()
+      config.signal = abortController.signal
+    }
     // 添加后端审计用header
     config.headers = {
       ...config.headers,
