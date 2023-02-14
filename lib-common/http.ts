@@ -56,7 +56,6 @@ const show403Message = debounce(() => {
 
 // 后台返回错误的默认反馈（显示message）
 const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string, legacyMsg?: string) => debounce(() => {
-  // @ts-ignore 有毛病这个ts，key不存在就返回undefined不就完了，又不会报错。。
   message.error(messages['zh-CN'].errors[statusCode] || legacyMsg || statusCode)
 }, 2000, { leading: true, trailing: false })
 

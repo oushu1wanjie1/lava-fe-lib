@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Response } from './http'
 
-export const messages = {
+export const messages: Record<string, { common: Record<string, string>, errors: Record<string, string> }> = {
   'zh-CN': {
     // 一般类别
     common: {},
@@ -246,6 +246,7 @@ export const messages = {
       'lava.error.db.canNotDropWhenIsBeingAccessed': '很遗憾！不能在有人访问时进行删除，请稍后刷新页面重试',
       'lava.error.db.canNotGetSessionId': '很遗憾！获取SessionId失败，请稍后刷新页面重试',
       'lava.error.createHDFSFolderError': '创建HDFS目录失败',
+      'lava.error.SecuurityTablePolicyWaitToApprove': '操作需要认证',
       // wasp & flow
       '10110001': '映射尚未完成',
       '10100002': '未知的调度类型'
