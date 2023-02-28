@@ -34,19 +34,41 @@ export interface Response<T> {
 // 复合旧版和现行的response，只用于该文件中，用于初始化
 type MixResponse<T> = Partial<OldResponse<T> & Response<T>>
 
-// Http请求自定义配置，使用该类可以新建自定义的http实例
-export class CustomHttpOptions {
+// Http请求自定义配置构造方法的选项
+interface Options {
   // 不在页面上显示Meta
   doNotShowMetaErrorMessage: boolean
   // 全局捕捉异常 message error 时不使用 debounce
   doNotShowMetaErrorMessageWithDebounce: boolean
   // 发送时取消上一个请求
   cancelLastRequest: boolean
-  constructor(doNotShowMetaErrorMessage = false, doNotShowMetaErrorMessageWithDebounce = false, cancelLastRequest = false) {
-    this.doNotShowMetaErrorMessage = doNotShowMetaErrorMessage
-    this.doNotShowMetaErrorMessageWithDebounce = doNotShowMetaErrorMessageWithDebounce
-    this.cancelLastRequest = cancelLastRequest
+  // 自定义baseUrl,
+  baseURL: string
+}
+
+// deprecated - 旧版平铺开的参数写法
+type DeprecatedDoNotShowMetaErrorMessageParam = boolean
+
+// Http请求自定义配置，使用该类可以新建自定义的http实例
+export class CustomHttpOptions implements Options {
+  constructor(options: Partial<Options> | DeprecatedDoNotShowMetaErrorMessageParam = false, doNotShowMetaErrorMessageWithDebounce = false, cancelLastRequest = false) {
+    if (typeof options === 'boolean') {
+      // 旧版写法
+      console.warn('使用了http选项的旧版写法，即将废弃')
+      this.doNotShowMetaErrorMessage = options
+      this.doNotShowMetaErrorMessageWithDebounce = doNotShowMetaErrorMessageWithDebounce
+      this.cancelLastRequest = cancelLastRequest
+    } else {
+      this.doNotShowMetaErrorMessage = options.doNotShowMetaErrorMessage || false
+      this.doNotShowMetaErrorMessageWithDebounce = options.doNotShowMetaErrorMessageWithDebounce || false
+      this.cancelLastRequest = options.cancelLastRequest || false
+    }
+    this.baseURL = typeof options !== 'boolean' && options.baseURL || '/api'
   }
+  baseURL: string
+  cancelLastRequest: boolean
+  doNotShowMetaErrorMessage: boolean
+  doNotShowMetaErrorMessageWithDebounce: boolean
 }
 
 // 403（没有权限）消息的显示
@@ -68,7 +90,7 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
   // 请求配置
   const axiosRequestConfig: AxiosRequestConfig = {
     // 所有请求添加/api前缀
-    baseURL: '/api',
+    baseURL: options.baseURL,
     // 对get请求进行querystring处理
     paramsSerializer: (params: any) => {
       return qs.stringify(params, {
