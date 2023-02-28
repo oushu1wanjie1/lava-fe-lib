@@ -51,7 +51,7 @@ type DeprecatedDoNotShowMetaErrorMessageParam = boolean
 
 // Http请求自定义配置，使用该类可以新建自定义的http实例
 export class CustomHttpOptions implements Options {
-  constructor(options: Partial<Options> | DeprecatedDoNotShowMetaErrorMessageParam = false, doNotShowMetaErrorMessageWithDebounce = false, cancelLastRequest = false) {
+  constructor(options: Partial<Options> | DeprecatedDoNotShowMetaErrorMessageParam = {}, doNotShowMetaErrorMessageWithDebounce = false, cancelLastRequest = false) {
     if (typeof options === 'boolean') {
       // 旧版写法
       console.warn('使用了http选项的旧版写法，即将废弃')
