@@ -183,6 +183,8 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
       }
     } else if (errObj.status === 403) {
       show403Message()
+    } else if (errObj.status === 502) {
+      return Promise.reject(err)
     } else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
       message.error(errObj.message)
     }
