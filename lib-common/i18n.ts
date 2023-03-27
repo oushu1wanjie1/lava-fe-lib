@@ -247,6 +247,19 @@ export const messages: Record<string, { common: Record<string, string>, errors: 
       'lava.error.db.canNotGetSessionId': '很遗憾！获取SessionId失败，请稍后刷新页面重试',
       'lava.error.createHDFSFolderError': '创建HDFS目录失败',
       'lava.error.SecuurityTablePolicyWaitToApprove': '操作需要认证',
+      // dashboard
+      'lava.error.createDashboard.nameIsRepeated': '仪表盘名称重复',
+      'lava.error.dashboard.nameIsIllegal': '仪表盘名称不合法',
+      'lava.error.panel.titleIsIllegal': '面板标题名称不合法',
+      'lava.copyDashboard.nameIsTooLongToBeCopied': '仪表盘名称过长不可复制',
+      'lava.error.dashboardNotExist': '仪表盘不存在',
+      'lava.error.dashboardReadyOverview': '仪表盘已经被设为总览仪表盘',
+      'lava.error.panelNotExist': '面板不存在',
+      'lava.error.panelReadyInPanelLibrary': '面板已经存在于面板组件库中',
+      'lava.error.panelNotInPanelLibrary': '面板不存在于面板组件库中',
+      'lava.error.panelIsAlreadyAddedToTheDashboard': '面板组件已经被添加到此仪表盘中',
+      'lava.error.panelIsNotAddedToDashboard': '面板组件并未添加到此仪表盘中',
+      'lava.error.cannotDeleteOverviewDashboard': '总览仪表盘不可删除',
       // wasp & flow
       '10110001': '映射尚未完成',
       '10100002': '未知的调度类型'
