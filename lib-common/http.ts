@@ -7,6 +7,7 @@ import qs from 'qs'
 // @ts-ignore
 import debounce from 'lodash.debounce'
 import { messages } from './i18n'
+import { h } from 'vue'
 
 export const SUCCESS_STATUS_CODE = 200
 
@@ -149,7 +150,10 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     if (!modifyRes.meta.success && !options.doNotShowMetaErrorMessage) {
       if (options.doNotShowMetaErrorMessageWithDebounce) {
         // @ts-ignore
-        message.error(messages['zh-CN'].errors[modifyRes.meta.status_code] || modifyRes.meta.message || modifyRes.meta.status_code)
+        message.error(h('span', {
+          style: { textAlign: 'left' },
+          innerHTML: messages['zh-CN'].errors[modifyRes.meta.status_code] || modifyRes.meta.message || modifyRes.meta.status_code
+        }))
       } else {
         if (!showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code]) {
           showMetaErrorMessageDebounceFunctionList[modifyRes.meta.status_code] = showMetaErrorMessageDebounceFunctionFactory(
