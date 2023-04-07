@@ -1,6 +1,6 @@
 {
   "name": "lava-fe-lib",
-  "version": "1.2.0-alpha.1",
+  "version": "1.2.0-alpha.10",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.7",
+    "@types/node": "^18.15.11",
     "@types/qs": "^6.9.7",
     "eslint": "^8.23.1",
     "typescript": "^4.5.4"

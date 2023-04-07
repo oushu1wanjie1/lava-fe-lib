@@ -9,7 +9,12 @@ import debounce from 'lodash.debounce'
 import { messages } from './i18n'
 import { h } from 'vue'
 
-export const SUCCESS_STATUS_CODE = 200
+// debounce time
+const DEBOUNCE_TIME = 2000
+const ROUTER_INIT_DELAY = 250
+const HTTP_ERROR_UNAUTHORIZED = 401
+const HTTP_ERROR_FORBIDDEN = 403
+const HTTP_ERROR_BAD_GATEWAY = 502
 
 // Meta信息
 export interface Meta {
@@ -21,7 +26,7 @@ export interface Meta {
 
 // 老旧服务的 response，适用于wasp flow
 export interface OldResponse<T> {
-  code: string | number,
+  code: string | number | undefined,
   message: string,
   data: T
 }
@@ -32,9 +37,6 @@ export interface Response<T> {
   data: T;
 }
 
-// 复合旧版和现行的response，只用于该文件中，用于初始化
-type MixResponse<T> = Partial<OldResponse<T> & Response<T>>
-
 // Http请求自定义配置构造方法的选项
 interface Options {
   // 不在页面上显示Meta
@@ -44,17 +46,86 @@ interface Options {
   // 发送时取消上一个请求
   cancelLastRequest: boolean
   // 自定义baseUrl,
-  baseURL: string
+  baseURL: string,
+  // 阻止默认的http错误处理方法
+  preventDefaultHttpErrorHandler: boolean
 }
 
 // deprecated - 旧版平铺开的参数写法
 type DeprecatedDoNotShowMetaErrorMessageParam = boolean
 
+// 处理wasp/flow旧版response，修改为新版response结构
+const handleOldResponse = <T>(response: OldResponse<T>): Response<T> => {
+  return {
+    meta: {
+      success: response.code === 0,
+      message: response.message || '',
+      status_code: (response.code || response.message).toString(),
+      params: ''
+    },
+    data: response.data
+  }
+}
+// 401（未登录）消息的显示
+const handle401Error = debounce(() => {
+  if (sessionStorage.getItem('is401') !== '1') {
+    sessionStorage.setItem('is401', '1')
+    sessionStorage.setItem('LAST_VISITED_PAGE', location.href.replace(location.origin, ''))
+    message.error('登录状态已过期，请重新登录')
+    setTimeout(() => {
+      const router = useRouter()
+      if (router) {
+        router.push(`${process.env.VUE_APP_PREFIX || ''}/login`).then(() => undefined)
+      } else {
+        location.href = `${process.env.VUE_APP_PREFIX || ''}/login`
+      }
+    }, ROUTER_INIT_DELAY)
+  }
+}, DEBOUNCE_TIME, { leading: true, trailing: false })
+
+// 403（没有权限）消息的显示
+const handle403Error = debounce(() => {
+  message.warn('您没有权限进行此操作')
+}, DEBOUNCE_TIME, { leading: true, trailing: false })
+
+// 502（网关错误）消息的显示
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const handle502Error = debounce(() => {
+}, DEBOUNCE_TIME, { leading: true, trailing: false })
+
+// 默认的错误消息
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const handleDefaultError = debounce(() => {
+}, DEBOUNCE_TIME, { leading: true, trailing: false })
+
+// 后台返回错误的默认反馈（显示message）
+const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string, legacyMsg?: string) => debounce(() => {
+  message.error(messages['zh-CN'].errors[statusCode] || legacyMsg || statusCode)
+}, DEBOUNCE_TIME, { leading: true, trailing: false })
+
+// 处理http错误的统一方法
+const handleHttpError = (error: Record<string, unknown>, preventDefault: boolean) => {
+  if (preventDefault) return
+  const { status } = error
+  if (status === HTTP_ERROR_UNAUTHORIZED) {
+    handle401Error()
+  } else if (status === HTTP_ERROR_FORBIDDEN) {
+    handle403Error()
+  } else if (status === HTTP_ERROR_BAD_GATEWAY) {
+    handle502Error()
+  } else {
+    handleDefaultError()
+  }
+}
+
 // Http请求自定义配置，使用该类可以新建自定义的http实例
 export class CustomHttpOptions implements Options {
-  constructor(options: Partial<Options> | DeprecatedDoNotShowMetaErrorMessageParam = {}, doNotShowMetaErrorMessageWithDebounce = false, cancelLastRequest = false) {
+  constructor(options: Partial<Options> | DeprecatedDoNotShowMetaErrorMessageParam = {},
+    doNotShowMetaErrorMessageWithDebounce = false,
+    cancelLastRequest = false) {
     if (typeof options === 'boolean') {
       // 旧版写法
+      // eslint-disable-next-line no-console
       console.warn('使用了http选项的旧版写法，即将废弃')
       this.doNotShowMetaErrorMessage = options
       this.doNotShowMetaErrorMessageWithDebounce = doNotShowMetaErrorMessageWithDebounce
@@ -64,23 +135,15 @@ export class CustomHttpOptions implements Options {
       this.doNotShowMetaErrorMessageWithDebounce = options.doNotShowMetaErrorMessageWithDebounce || false
       this.cancelLastRequest = options.cancelLastRequest || false
     }
-    this.baseURL = typeof options !== 'boolean' && options.baseURL || '/api'
+    this.baseURL = typeof options !== 'boolean' && options.baseURL || `${process.env.VUE_APP_PREFIX || ''}/api`
+    this.preventDefaultHttpErrorHandler = false
   }
   baseURL: string
   cancelLastRequest: boolean
   doNotShowMetaErrorMessage: boolean
   doNotShowMetaErrorMessageWithDebounce: boolean
+  preventDefaultHttpErrorHandler: boolean
 }
-
-// 403（没有权限）消息的显示
-const show403Message = debounce(() => {
-  message.error('系统错误：没有权限')
-}, 2000, { leading: true, trailing: false })
-
-// 后台返回错误的默认反馈（显示message）
-const showMetaErrorMessageDebounceFunctionFactory = (statusCode: string, legacyMsg?: string) => debounce(() => {
-  message.error(messages['zh-CN'].errors[statusCode] || legacyMsg || statusCode)
-}, 2000, { leading: true, trailing: false })
 
 // http main
 export const customHttp = (options = new CustomHttpOptions() ) => {
@@ -120,33 +183,33 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
     return config
   })
 
-  http.interceptors.response.use((res: AxiosResponse<MixResponse<any>>) => {
+  http.interceptors.response.use((res: AxiosResponse<Response<unknown> | OldResponse<unknown>>) => {
+    // 当返回值不是json类型时，不进行处理直接返回
     // @ts-ignore ['content-type']
     const isjsonData = res.headers['content-type'].includes('application/json')
     if (!isjsonData) {
       return res
     }
-    let modifyRes: Response<any> = { meta: { success: true, message: '', status_code: '', params: '' }, data: undefined }
-    // 将旧版的Response处理成现行版本，映射见下面逻辑
-    if (res.data.code !== undefined && res.data.meta === undefined) {
+
+    /**
+     * 返回值预处理
+     */
+    let modifyRes: Response<any>
+    // 将旧版的Response处理成现行版本
+    if ((<OldResponse<unknown>>res.data).code !== undefined) {
       // 该情况下为OldResponse
-      modifyRes.meta = {
-        success: res.data.code === 0,
-        // 当code是空字符串或者undefined的时候，尝试用message代替(有些旧版请求没有code，用message当做code)
-        status_code: String((res.data.code === undefined || res.data.code === '') ? res.data.message : res.data.code),
-        message: res.data.message || '',
-        params: ''
-      }
-      modifyRes.data = res.data.data
-    } else if (res.data.meta !== undefined) {
-      // 该情况下为现行的Response
-      modifyRes = res.data as Response<any>
-    } else {
+      modifyRes = handleOldResponse(<OldResponse<unknown>>res.data)
+    } else if (!(<Response<unknown>>res.data).meta) {
       // 如果没有meta且没有code，则认为接口格式错误
-      message.error('接口格式错误:没有meta')
       return Promise.reject(new Error('接口格式错误:没有meta'))
+    } else {
+      // 该情况下为现行的Response
+      modifyRes = <Response<any>>res.data
     }
-    // 统一处理meta报错信息
+
+    /**
+     * meta报错信息处理
+     */
     if (!modifyRes.meta.success && !options.doNotShowMetaErrorMessage) {
       if (options.doNotShowMetaErrorMessageWithDebounce) {
         // @ts-ignore
@@ -164,35 +227,12 @@ export const customHttp = (options = new CustomHttpOptions() ) => {
       }
     }
     return modifyRes
-  }, (err: any) => {
-    const errObj: any = JSON.parse(JSON.stringify(err))
-    if (errObj.status === 401) {
-      if (sessionStorage.getItem('is401') === '1') {
-        return err
-      } else {
-        sessionStorage.setItem('is401', '1')
-        console.log('[lava-fe-lib]因接口40111而返回login', location.href.replace(location.origin, ''))
-        sessionStorage.setItem('LAST_VISITED_PAGE', location.href.replace(location.origin, ''))
-        message.error('登录状态已过期，请重新登录')
-        setTimeout(() => {
-          const router = useRouter()
-          if (router) {
-            router.push('/login')
-          } else {
-            location.href = '/login'
-          }
-        }, 250)
-
-        return Promise.reject(err)
-      }
-    } else if (errObj.status === 403) {
-      show403Message()
-    } else if (errObj.status === 502) {
-      return Promise.reject(err)
-    } else if (/^(4|5)[0-9]{2}$/.test(errObj.status)) {
-      message.error(errObj.message)
-    }
-
+  }, (err) => {
+    /**
+     * http 错误处理
+     */
+    const errObj: Record<string, unknown> = JSON.parse(JSON.stringify(err))
+    handleHttpError(errObj, options.preventDefaultHttpErrorHandler)
     return Promise.reject(err)
   })
 
