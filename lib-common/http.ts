@@ -60,7 +60,7 @@ const handleOldResponse = <T>(response: OldResponse<T>): Response<T> => {
     meta: {
       success: response.code === 0,
       message: response.message || '',
-      status_code: (response.code || response.message).toString(),
+      status_code: (response.code ?? response.message).toString(),
       params: ''
     },
     data: response.data
