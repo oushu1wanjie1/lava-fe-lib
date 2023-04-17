@@ -260,9 +260,13 @@ export const messages: Record<string, { common: Record<string, string>, errors: 
       'lava.error.panelIsAlreadyAddedToTheDashboard': '面板组件已经被添加到此仪表板中',
       'lava.error.panelIsNotAddedToDashboard': '面板组件并未添加到此仪表板中',
       'lava.error.cannotDeleteOverviewDashboard': '总览仪表板不可删除',
-      // wasp & flow
+      // wasp
       '10110001': '映射尚未完成',
-      '10100002': '未知的调度类型'
+      '10100002': '未知的调度类型',
+      // flow
+      'flow.error.task.jobTaskCallItself':'禁止引用本作业，请重新选择',
+      'flow.error.task.jobNotValid':'不能保存本次改动，会导致作业依赖成环',
+      'flow.error.job.duplicateJobName':'作业名重复'
     }
   }
 }
