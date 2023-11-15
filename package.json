@@ -1,0 +1,29 @@
+{
+  "name": "node-utils",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "node server/index.js"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.6.1",
+    "axios": "^1.6.1",
+    "express": "^4.18.2",
+    "qs": "^6.11.2",
+    "tdesign-vue-next": "^1.6.8",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "vite": "^4.4.5",
+    "vite-plugin-pug": "^0.3.2"
+  }
+}
